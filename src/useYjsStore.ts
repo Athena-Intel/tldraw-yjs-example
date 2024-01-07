@@ -25,7 +25,7 @@ export function useYjsStore({
     // hostUrl = "ws://localhost:1234",
     hostUrl = import.meta.env.MODE !== "development"
         ? "ws://localhost:1234"
-        : "wss://fe7cc6ac0509.ngrok.app",
+        : "wss:/athenaintelligence.ngrok.io",
     shapeUtils = [],
 }: Partial<{
     hostUrl: string;
