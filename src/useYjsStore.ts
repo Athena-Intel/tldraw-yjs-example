@@ -25,7 +25,7 @@ export function useYjsStore({
     // hostUrl = "ws://localhost:1234",
     hostUrl = import.meta.env.MODE !== "development"
         ? "ws://localhost:1234"
-        : "ws://tldraw-yjs-example-pink.vercel.app",
+        : "wss://tldraw-yjs-example-pink.vercel.app",
     shapeUtils = [],
 }: Partial<{
     hostUrl: string;
