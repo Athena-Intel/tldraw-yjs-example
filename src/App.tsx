@@ -5,7 +5,7 @@ import { useYjsStore } from "./useYjsStore";
 const HOST_URL =
     import.meta.env.MODE === "development"
         ? "ws://localhost:1234"
-        : "wss://tldraw-yjs-example-pink.vercel.app";
+        : "wss://fe7cc6ac0509.ngrok.app";
 
 export default function YjsExample() {
     const store = useYjsStore({
