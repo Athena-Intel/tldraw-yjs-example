@@ -2,10 +2,10 @@ import { Tldraw, track, useEditor } from "@tldraw/tldraw";
 import "@tldraw/tldraw/tldraw.css";
 import { useYjsStore } from "./useYjsStore";
 
-const HOST_URL = "ws://localhost:1234";
-// import.meta.env.MODE === 'development'
-// 	? 'ws://localhost:1234'
-// 	: 'wss://demos.yjs.dev'
+const HOST_URL =
+    import.meta.env.MODE === "development"
+        ? "ws://localhost:1234"
+        : "wss://demos.yjs.dev";
 
 export default function YjsExample() {
     const store = useYjsStore({

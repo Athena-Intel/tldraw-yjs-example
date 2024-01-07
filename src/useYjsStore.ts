@@ -22,10 +22,10 @@ import { DEFAULT_STORE } from "./default_store";
 
 export function useYjsStore({
     roomId = "example",
-    hostUrl = "ws://localhost:1234",
-    // hostUrl = import.meta.env.MODE !== "development"
-    //     ? "ws://localhost:1234"
-    //     : "wss://demos.yjs.dev",
+    // hostUrl = "ws://localhost:1234",
+    hostUrl = import.meta.env.MODE !== "development"
+        ? "ws://localhost:1234"
+        : "wss://tldraw-yjs-example-pink.vercel.app",
     shapeUtils = [],
 }: Partial<{
     hostUrl: string;
