@@ -33,7 +33,6 @@ export function useYjsStore({
     version: number;
     shapeUtils: TLAnyShapeUtilConstructor[];
 }>) {
-    console.log("useYjsStore", { hostUrl, roomId, shapeUtils });
     const [store] = useState(() => {
         const store = createTLStore({
             shapeUtils: [...defaultShapeUtils, ...shapeUtils],

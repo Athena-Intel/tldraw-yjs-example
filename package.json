@@ -5,6 +5,7 @@
     "type": "module",
     "scripts": {
         "dev": "concurrently \"vite\" \"HOST=localhost PORT=1234 npx y-websocket\" --kill-others",
+        "dev-frontend": "vite",
         "prod": "concurrently \"vite\" \"HOST=yjs-tldraw.onrender.com PORT=1234 npx y-websocket\" --kill-others",
         "start-yjs": "HOST=localhost PORT=1234 npx y-websocket",
         "dev:win": "concurrently \"vite\" \"set HOST=yjs-tldraw.onrender.com&& set PORT=1234 && npx y-websocket --host\" --kill-others",

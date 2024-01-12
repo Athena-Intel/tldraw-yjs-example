@@ -1,30 +1,37 @@
+import { useEffect, useState } from "react";
 import { Tldraw, track, useEditor } from "@tldraw/tldraw";
 import "@tldraw/tldraw/tldraw.css";
 import { useYjsStore } from "./useYjsStore";
-// import { getOrCreateDocAndToken } from "@y-sweet/sdk";
-// import { useEffect, useState } from "react";
-
-// const HOST_URL =
-//     import.meta.env.MODE === "development"
-//         ? "ws://34.28.137.204"
-//         : "wss:/athenaintelligence.ngrok.io";
 
 const HOST_URL = "wss://yjs.athenaintelligence.ai";
 
-export default function YjsExample() {
+export default function App() {
+    const [roomId, setRoomId] = useState<string | null>(null);
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const space = params.get("space");
+
+        if (space) {
+            setRoomId(space);
+        } else {
+            const newSpace = Math.random().toString(36).substring(2);
+            setRoomId(newSpace);
+        }
+    }, []);
+
+    if (!roomId) {
+        return <div>Loading...</div>;
+    } else {
+        return <YjsExample roomId={roomId} />;
+    }
+}
+
+export function YjsExample({ roomId }: { roomId: string }) {
     const store = useYjsStore({
-        roomId: "example17",
+        roomId: roomId,
         hostUrl: HOST_URL,
     });
-
-    // // const clientToken = await getOrCreateDocAndToken(CONNECTION_STRING, docId);
-
-    // useEffect(() => {
-
-    //     setClientToken(clientToken);
-    // }, []);
-
-    // console.log("clientToken", clientToken);
 
     return (
         <div className="tldraw__editor">
