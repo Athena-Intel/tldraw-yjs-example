@@ -22,11 +22,10 @@ import { DEFAULT_STORE } from "./default_store";
 
 export function useYjsStore({
     roomId = "example17",
-    // hostUrl = "ws://localhost:1234",
-    hostUrl = import.meta.env.MODE !== "development"
-        ? "ws://localhost:1234"
-        : "wss:/athenaintelligence.ngrok.io",
-
+    hostUrl = "ws://34.28.137.204",
+    // hostUrl = import.meta.env.MODE !== "development"
+    //     ? "ws://34.28.137.204"
+    //     : "wss:/athenaintelligence.ngrok.io",
     shapeUtils = [],
 }: Partial<{
     hostUrl: string;

@@ -4,16 +4,12 @@ import { useYjsStore } from "./useYjsStore";
 // import { getOrCreateDocAndToken } from "@y-sweet/sdk";
 // import { useEffect, useState } from "react";
 
-const HOST_URL =
-    import.meta.env.MODE === "development"
-        ? "ws://localhost:1234"
-        : "wss:/athenaintelligence.ngrok.io";
-
 // const HOST_URL =
-//     "wss://BomJgXzxdIyahuBs9gw.AAAgUiPU_AH_aPA563f2M9u5g2QvPHxcoK7N4fiuMSJQmzY@y-sweet.net/p/jEBt2X2fx3Yza4mLvY4/";
+//     import.meta.env.MODE === "development"
+//         ? "ws://34.28.137.204"
+//         : "wss:/athenaintelligence.ngrok.io";
 
-// const HOST_URL =
-//     "yss://BomJgXzxdIyahuBs9gw.AAAgUiPU_AH_aPA563f2M9u5g2QvPHxcoK7N4fiuMSJQmzY@y-sweet.net/p/jEBt2X2fx3Yza4mLvY4/";
+const HOST_URL = "ws://34.28.137.204";
 
 export default function YjsExample() {
     const store = useYjsStore({

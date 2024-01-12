@@ -2119,7 +2119,7 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
-lib0@^0.2.31, lib0@^0.2.42, lib0@^0.2.52, lib0@^0.2.74:
+lib0@^0.2.31, lib0@^0.2.42, lib0@^0.2.52:
   version "0.2.78"
   resolved "https://registry.npmjs.org/lib0/-/lib0-0.2.78.tgz"
   integrity sha512-SV2nU43/6eaYnGH3l0lg2wg1ziB/TH3sAd2E8quXPGwrqo+aX98SNT2ZKucpUr5B8A52jD7ZMjAl+r87Fa/bLQ==
@@ -2130,6 +2130,13 @@ lib0@^0.2.43:
   version "0.2.86"
   resolved "https://registry.npmjs.org/lib0/-/lib0-0.2.86.tgz"
   integrity sha512-kxigQTM4Q7NwJkEgdqQvU21qiR37twcqqLmh+/SbiGbRLfPlLVbHyY9sWp7PwXh0Xus9ELDSjsUOwcrdt5yZ4w==
+  dependencies:
+    isomorphic.js "^0.2.4"
+
+lib0@^0.2.86:
+  version "0.2.88"
+  resolved "https://registry.yarnpkg.com/lib0/-/lib0-0.2.88.tgz#18618e0c3b63f6260255eb760f9247d9cc6c6a5b"
+  integrity sha512-KyroiEvCeZcZEMx5Ys+b4u4eEBbA1ch7XUaBhYpwa/nPMrzTjUhI4RfcytmQfYoTBPcdyx+FX6WFNIoNuJzJfQ==
   dependencies:
     isomorphic.js "^0.2.4"
 
@@ -2705,7 +2712,7 @@ xtend@^4.0.2, xtend@~4.0.0:
 
 y-leveldb@^0.1.0:
   version "0.1.2"
-  resolved "https://registry.npmjs.org/y-leveldb/-/y-leveldb-0.1.2.tgz"
+  resolved "https://registry.yarnpkg.com/y-leveldb/-/y-leveldb-0.1.2.tgz#43f6c5004b6891b57926d8a1e0eb0c883003e34b"
   integrity sha512-6ulEn5AXfXJYi89rXPEg2mMHAyyw8+ZfeMMdOtBbV8FJpQ1NOrcgi6DTAcXof0dap84NjHPT2+9d0rb6cFsjEg==
   dependencies:
     level "^6.0.1"
@@ -2771,11 +2778,11 @@ yargs@^17.7.2:
     yargs-parser "^21.1.1"
 
 yjs@^13.6.8:
-  version "13.6.8"
-  resolved "https://registry.npmjs.org/yjs/-/yjs-13.6.8.tgz"
-  integrity sha512-ZPq0hpJQb6f59B++Ngg4cKexDJTvfOgeiv0sBc4sUm8CaBWH7OQC4kcCgrqbjJ/B2+6vO49exvTmYfdlPtcjbg==
+  version "13.6.10"
+  resolved "https://registry.yarnpkg.com/yjs/-/yjs-13.6.10.tgz#bea33b2e73944d54bc6849db2042b9696b95e717"
+  integrity sha512-1JcyQek1vaMyrDm7Fqfa+pvHg/DURSbVo4VmeN7wjnTKB/lZrfIPhdCj7d8sboK6zLfRBJXegTjc9JlaDd8/Zw==
   dependencies:
-    lib0 "^0.2.74"
+    lib0 "^0.2.86"
 
 yocto-queue@^0.1.0:
   version "0.1.0"
