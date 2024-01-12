@@ -9,7 +9,7 @@ import { useYjsStore } from "./useYjsStore";
 //         ? "ws://34.28.137.204"
 //         : "wss:/athenaintelligence.ngrok.io";
 
-const HOST_URL = "ws://34.28.137.204";
+const HOST_URL = "wss://yjs.athenaintelligence.ai";
 
 export default function YjsExample() {
     const store = useYjsStore({
