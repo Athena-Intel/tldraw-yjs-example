@@ -22,3 +22,16 @@ yarn dev:win
 ```
 
 Open the example project at `localhost:5173`.
+
+
+# Athena (start via two console windows)
+
+### 1 - y-websocket server
+```bash
+yarn dev
+```
+
+### 2 - ngrok it to athena domain
+```bash
+ngrok http 1234 --domain=athenaintelligence.ngrok.io
+```

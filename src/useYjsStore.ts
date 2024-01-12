@@ -21,11 +21,12 @@ import * as Y from "yjs";
 import { DEFAULT_STORE } from "./default_store";
 
 export function useYjsStore({
-    roomId = "example",
+    roomId = "example17",
     // hostUrl = "ws://localhost:1234",
     hostUrl = import.meta.env.MODE !== "development"
         ? "ws://localhost:1234"
         : "wss:/athenaintelligence.ngrok.io",
+
     shapeUtils = [],
 }: Partial<{
     hostUrl: string;

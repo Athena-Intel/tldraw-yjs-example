@@ -12,6 +12,7 @@
     },
     "dependencies": {
         "@tldraw/tldraw": "^2.0.0-alpha.17",
+        "@y-sweet/react": "^0.1.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "y-utility": "^0.1.3",
