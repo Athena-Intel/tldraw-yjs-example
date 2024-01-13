@@ -1,7 +1,20 @@
 import { useEffect, useState } from "react";
-import { Tldraw, track, useEditor } from "@tldraw/tldraw";
+import {
+    Box,
+    track,
+    TLEditorComponents,
+    TLUiAssetUrlOverrides,
+    TLUiOverrides,
+    Tldraw,
+    Vec,
+    toolbarItem,
+    useEditor,
+    useValue,
+} from "@tldraw/tldraw";
 import "@tldraw/tldraw/tldraw.css";
 import { useYjsStore } from "./useYjsStore";
+import { ScreenshotTool } from "./ScreenshotTool/ScreenshotTool";
+import { ScreenshotDragging } from "./ScreenshotTool/childStates/Dragging";
 
 const HOST_URL = "wss://yjs.athenaintelligence.ai";
 
@@ -26,6 +39,94 @@ export default function App() {
         return <YjsExample roomId={roomId} />;
     }
 }
+// [1]
+const customTools = [ScreenshotTool];
+
+// [2]
+const customUiOverrides: TLUiOverrides = {
+    tools: (editor, tools) => {
+        return {
+            ...tools,
+            screenshot: {
+                id: "screenshot",
+                label: "Screenshot",
+                readonlyOk: false,
+                icon: "tool-screenshot",
+                kbd: "j",
+                onSelect() {
+                    editor.setCurrentTool("screenshot");
+                },
+            },
+        };
+    },
+    toolbar: (_editor, toolbarItems, { tools }) => {
+        toolbarItems.splice(4, 0, toolbarItem(tools.screenshot));
+        return toolbarItems;
+    },
+};
+
+// [3]
+const customAssetUrls: TLUiAssetUrlOverrides = {
+    icons: {
+        "tool-screenshot": "/tool-screenshot.svg",
+    },
+};
+
+// [4]
+function ScreenshotBox() {
+    const editor = useEditor();
+
+    const screenshotBrush = useValue(
+        "screenshot brush",
+        () => {
+            // Check whether the screenshot tool (and its dragging state) is active
+            if (editor.getPath() !== "screenshot.dragging") return null;
+
+            // Get screenshot.dragging state node
+            const draggingState = editor.getStateDescendant<ScreenshotDragging>(
+                "screenshot.dragging"
+            )!;
+
+            // Get the box from the screenshot.dragging state node
+            const box = draggingState.screenshotBox.get();
+
+            // The box is in "page space", i.e. panned and zoomed with the canvas, but we
+            // want to show it in front of the canvas, so we'll need to convert it to
+            // "page space", i.e. uneffected by scale, and relative to the tldraw
+            // page's top left corner.
+            const zoomLevel = editor.getZoomLevel();
+            const { x, y } = Vec.Sub(
+                editor.pageToScreen({ x: box.x, y: box.y }),
+                editor.getViewportScreenBounds()
+            );
+            return new Box(x, y, box.w * zoomLevel, box.h * zoomLevel);
+        },
+        [editor]
+    );
+
+    if (!screenshotBrush) return null;
+
+    return (
+        <div
+            style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                transform: `translate(${screenshotBrush.x}px, ${screenshotBrush.y}px)`,
+                width: screenshotBrush.w,
+                height: screenshotBrush.h,
+                border: "1px solid var(--color-text-0)",
+                zIndex: 999,
+            }}
+        />
+    );
+}
+
+const customComponents: TLEditorComponents = {
+    InFrontOfTheCanvas: () => {
+        return <ScreenshotBox />;
+    },
+};
 
 export function YjsExample({ roomId }: { roomId: string }) {
     const store = useYjsStore({
@@ -35,7 +136,17 @@ export function YjsExample({ roomId }: { roomId: string }) {
 
     return (
         <div className="tldraw__editor">
-            <Tldraw autoFocus store={store} shareZone={<NameEditor />} />
+            {/* <Tldraw autoFocus store={store} shareZone={<NameEditor />} /> */}
+            <Tldraw
+                // persistenceKey="tldraw_screenshot_example"
+                autoFocus
+                store={store}
+                shareZone={<NameEditor />}
+                tools={customTools}
+                overrides={customUiOverrides}
+                assetUrls={customAssetUrls}
+                components={customComponents}
+            />
         </div>
     );
 }
@@ -43,7 +154,7 @@ export function YjsExample({ roomId }: { roomId: string }) {
 const NameEditor = track(() => {
     const editor = useEditor();
 
-    const { color, name } = editor.user;
+    const { color, name } = editor.user.getUserPreferences();
 
     return (
         <div style={{ pointerEvents: "all", display: "flex" }}>
