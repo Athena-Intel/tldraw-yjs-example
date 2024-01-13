@@ -1,4 +1,11 @@
-import { Box, StateNode, atom, copyAs, exportAs } from "@tldraw/tldraw";
+import {
+    Box,
+    StateNode,
+    atom,
+    copyAs,
+    // exportAs
+    getSvgAsImage,
+} from "@tldraw/tldraw";
 
 // There's a guide at the bottom of this file!
 
@@ -59,7 +66,7 @@ export class ScreenshotDragging extends StateNode {
     }
 
     // [3]
-    override onPointerUp = () => {
+    override onPointerUp = async () => {
         const { editor } = this;
         const box = this.screenshotBox.get();
 
@@ -84,16 +91,34 @@ export class ScreenshotDragging extends StateNode {
                 );
             } else {
                 // Export the shapes as a png
-                exportAs(
-                    editor,
-                    shapes.map((s) => s.id),
-                    "png",
-                    {
-                        bounds: box,
-                        background: editor.getInstanceState().exportBackground,
-                    }
-                );
+                // exportAs(
+                //     editor,
+                //     shapes.map((s) => s.id),
+                //     "png",
+                //     {
+                //         bounds: box,
+                //         background: editor.getInstanceState().exportBackground,
+                //     }
+                // );
             }
+        }
+        if (shapes.length) {
+            // Render the shapes to a canvas and get the base64 image string
+            const image = await generateImage(editor, shapes);
+            console.log(image);
+
+            // convert to base64
+            const base64ImageString = btoa(
+                new Uint8Array(await image.arrayBuffer()).reduce(
+                    (data, byte) => data + String.fromCharCode(byte),
+                    ""
+                )
+            );
+
+            console.log(base64ImageString);
+
+            // Now you can use the base64ImageString variable as needed
+            // For example, you could assign it to a state variable or perform further actions
         }
 
         this.editor.setCurrentTool("select");
@@ -103,6 +128,27 @@ export class ScreenshotDragging extends StateNode {
     override onCancel = () => {
         this.editor.setCurrentTool("select");
     };
+}
+
+// This is a placeholder function for rendering shapes to a canvas and converting to base64
+async function generateImage(editor: any, shapes: any) {
+    const svg = await editor.getSvg(shapes, {
+        // TODO: bigger scale = better line sharpness, but blurry image...
+        scale: 1,
+        background: false,
+    });
+    if (!svg) {
+        throw new Error(`Failed to generate SVG`);
+    }
+    const image = await getSvgAsImage(svg, false, {
+        type: "png",
+        quality: 1,
+        scale: 1,
+    });
+    if (!image) {
+        throw new Error(`Failed to generate image`);
+    }
+    return image;
 }
 
 /*
