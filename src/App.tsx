@@ -60,7 +60,7 @@ export default function App() {
                 },
             });
         };
-        fetchData("Hello");
+        // fetchData("Hello");
     }, []);
 
     useEffect(() => {
