@@ -22,13 +22,13 @@ const HOST_URL = "wss://yjs.athenaintelligence.ai";
 export default function App() {
     const [roomId, setRoomId] = useState<string | null>(null);
 
-    // eslint-disable-next-line
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [data, setData] = useState<string[]>([]);
 
     useEffect(() => {
         const serverBaseURL = "http://127.0.0.1:8008";
 
-        // eslint-disable-next-line
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const fetchData = async (message: string) => {
             await fetchEventSource(`${serverBaseURL}/api/vision/stream`, {
                 method: "POST",
