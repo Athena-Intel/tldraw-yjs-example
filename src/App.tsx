@@ -15,55 +15,13 @@ import "@tldraw/tldraw/tldraw.css";
 import { useYjsStore } from "./useYjsStore";
 import { ScreenshotTool } from "./ScreenshotTool/ScreenshotTool";
 import { ScreenshotDragging } from "./ScreenshotTool/childStates/Dragging";
-import { fetchEventSource } from "@microsoft/fetch-event-source";
+import { ExportButton } from "./components/ExportButton";
+// import { fetchEventSource } from "@microsoft/fetch-event-source";
 
 const HOST_URL = "wss://yjs.athenaintelligence.ai";
 
 export default function App() {
     const [roomId, setRoomId] = useState<string | null>(null);
-
-    const [data, setData] = useState<string[]>([]);
-
-    useEffect(() => {
-        const serverBaseURL = "http://127.0.0.1:8008";
-
-        // @ts-ignore
-        const fetchData = async (message: string) => {
-            await fetchEventSource(`${serverBaseURL}/api/vision/stream`, {
-                method: "POST",
-                headers: {
-                    Accept: "text/event-stream",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ message }),
-                onopen(res): Promise<void> {
-                    if (res.ok && res.status === 200) {
-                        console.log("Connection made ", res);
-                    } else if (
-                        res.status >= 400 &&
-                        res.status < 500 &&
-                        res.status !== 429
-                    ) {
-                        console.log("Client-side error ", res);
-                    }
-                    return Promise.resolve();
-                },
-                onmessage(event) {
-                    // console.log(event.data);
-                    setData((data) => [...data, event.data]);
-                    // console.log(data.join(""));
-                },
-                onclose() {
-                    console.log("Connection closed by the server");
-                    // addTextToEditor(data.join(""))
-                },
-                onerror(err) {
-                    console.log("There was an error from server", err);
-                },
-            });
-        };
-        // fetchData("Hello");
-    }, []);
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -190,7 +148,13 @@ export function YjsExample({ roomId }: { roomId: string }) {
                 // persistenceKey="tldraw_screenshot_example"
                 autoFocus
                 store={store}
-                shareZone={<NameEditor />}
+                // shareZone={<NameEditor />}
+                shareZone={
+                    <div>
+                        <ExportButton />
+                        {/* <NameEditor /> */}
+                    </div>
+                }
                 tools={customTools}
                 overrides={customUiOverrides}
                 assetUrls={customAssetUrls}
@@ -200,6 +164,7 @@ export function YjsExample({ roomId }: { roomId: string }) {
     );
 }
 
+// @ts-ignore
 const NameEditor = track(() => {
     const editor = useEditor();
 

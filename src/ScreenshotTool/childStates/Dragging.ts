@@ -3,14 +3,22 @@ import {
     StateNode,
     atom,
     copyAs,
-    // exportAs
+    Editor,
     getSvgAsImage,
     createShapeId,
     TLTextShape,
     TLShapePartial,
+    TLSvgOptions,
+    TLShapeId,
+    // useToasts,
+    // exportAs,
 } from "@tldraw/tldraw";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
-// There's a guide at the bottom of this file!
+
+const SERVER_BASE_URL =
+    import.meta.env.MODE === "development"
+        ? "http://127.0.0.1:8008"
+        : "https://causal-backend.onrender.com";
 
 export class ScreenshotDragging extends StateNode {
     static override id = "dragging";
@@ -71,6 +79,7 @@ export class ScreenshotDragging extends StateNode {
     // [3]
     override onPointerUp = async () => {
         const { editor } = this;
+        // const toast = useToasts();
         const box = this.screenshotBox.get();
 
         // get all shapes contained by or intersecting the box
@@ -91,32 +100,36 @@ export class ScreenshotDragging extends StateNode {
                 y: center.y,
                 props: {
                     text: initialText,
+                    align: "start",
                     font: "sans",
+                    autoSize: false,
+                    w: 600,
                 },
             });
+            // const shape = editor.getShape(shapeId);
+            // console.log(shape);
         };
 
         const updateTextShapeInEditor = (id: string, updatedText: string) => {
             const shapeId = createShapeId(id);
-            // const shape = editor.getShape<TLTextShape>(shapeId)!;
+
             const shapeUpdate: TLShapePartial<TLTextShape> = {
                 id: shapeId,
                 type: "text",
                 props: {
                     text: updatedText,
+                    font: "sans",
                 },
             };
-
-            // Update the shape
             editor.updateShapes([shapeUpdate]);
         };
 
-        const textId = Math.random().toString(36).substring(7);
-
-        createTextShapeInEditor(textId, "Athena is thinking...");
-
-        // const shapeId2 = createShapeId(textId);
-
+        // if (shapes.length === 0) {
+        //     toast.addToast({
+        //         title: "No content found in the screenshot box",
+        //         // description: `${e.message.slice(0, 200)}`,
+        //     });
+        // }
         if (shapes.length) {
             if (editor.inputs.ctrlKey) {
                 // Copy the shapes to the clipboard
@@ -130,7 +143,7 @@ export class ScreenshotDragging extends StateNode {
                     }
                 );
             } else {
-                // Export the shapes as a png
+                // // Export the shapes as a png
                 // exportAs(
                 //     editor,
                 //     shapes.map((s) => s.id),
@@ -143,31 +156,47 @@ export class ScreenshotDragging extends StateNode {
             }
         }
         if (shapes.length) {
-            // Render the shapes to a canvas and get the base64 image string
-            const image = await generateImage(editor, shapes);
-            console.log(image);
+            const textId = Math.random().toString(36).substring(7);
+            createTextShapeInEditor(textId, "Athena is thinking...");
+
+            const blob = await exportToBlob(
+                editor,
+                shapes.map((s) => s.id),
+                {
+                    background: editor.getInstanceState().exportBackground,
+                    bounds: box,
+                }
+            );
+            const file = new File([blob], "tmp", { type: blob.type });
+
+            if (import.meta.env.MODE === "development") {
+                downloadFile(file);
+            }
 
             // convert to base64
-            // const base64ImageString = btoa(
-            //     new Uint8Array(await image.arrayBuffer()).reduce(
-            //         (data, byte) => data + String.fromCharCode(byte),
-            //         ""
-            //     )
-            // );
-            // // console.log(base64ImageString);
+            const base64ImageString = btoa(
+                new Uint8Array(await blob.arrayBuffer()).reduce(
+                    (data, byte) => data + String.fromCharCode(byte),
+                    ""
+                )
+            );
+            // console.log(base64ImageString);
 
             const data: string[] = [];
 
-            const serverBaseURL = "http://127.0.0.1:8008";
+            // const SERVER_BASE_URL = "http://127.0.0.1:8008";
 
             const fetchData = async (message: string) => {
-                await fetchEventSource(`${serverBaseURL}/api/vision/stream`, {
+                await fetchEventSource(`${SERVER_BASE_URL}/api/vision/stream`, {
                     method: "POST",
                     headers: {
                         Accept: "text/event-stream",
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ message }),
+                    body: JSON.stringify({
+                        message: message,
+                        base64_image: base64ImageString,
+                    }),
                     onopen(res): Promise<void> {
                         if (res.ok && res.status === 200) {
                             console.log("Connection made ", res);
@@ -181,15 +210,13 @@ export class ScreenshotDragging extends StateNode {
                         return Promise.resolve();
                     },
                     onmessage(event) {
-                        // console.log(event.data);
-                        // setData((data) => [...data, event.data]);
                         data.push(event.data);
-                        console.log(event.data);
                         const concatData = data.join("");
                         updateTextShapeInEditor(textId, concatData);
                     },
                     onclose() {
                         console.log("Connection closed by the server");
+                        console.log(data);
                         if (data.length > 0) {
                             const concatData = data.join("");
                             updateTextShapeInEditor(textId, concatData);
@@ -197,14 +224,20 @@ export class ScreenshotDragging extends StateNode {
                     },
                     onerror(err) {
                         console.log("There was an error from server", err);
+                        updateTextShapeInEditor(
+                            textId,
+                            "Error while attempting to run this task."
+                        );
                     },
                 });
             };
 
-            fetchData("write a 10 word poem");
-
-            // Now you can use the base64ImageString variable as needed
-            // For example, you could assign it to a state variable or perform further actions
+            // fetchData(
+            //     "Concisely respond to the provided image. If there is a request in the image the write a response. If there is no request, simply transcribe or interpret the image. You don't need to describe the colors or background of the image."
+            // );
+            // fetchData("Respond to the user's request in the image. ");
+            // fetchData("What time range is the user referring to?");
+            fetchData("Transcribe this table");
         }
 
         this.editor.setCurrentTool("select");
@@ -216,17 +249,19 @@ export class ScreenshotDragging extends StateNode {
     };
 }
 
-// This is a placeholder function for rendering shapes to a canvas and converting to base64
-async function generateImage(editor: any, shapes: any) {
-    const svg = await editor.getSvg(shapes, {
-        // TODO: bigger scale = better line sharpness, but blurry image...
-        scale: 1,
-        background: false,
-    });
+async function exportToBlob(
+    editor: Editor,
+    ids: TLShapeId[],
+    opts = {} as Partial<TLSvgOptions>
+) {
+    const svg = await editor.getSvg(
+        ids?.length ? ids : [...editor.getCurrentPageShapeIds()],
+        opts
+    );
     if (!svg) {
         throw new Error(`Failed to generate SVG`);
     }
-    const image = await getSvgAsImage(svg, false, {
+    const image = await getSvgAsImage(svg, editor.environment.isSafari, {
         type: "png",
         quality: 1,
         scale: 1,
@@ -235,6 +270,15 @@ async function generateImage(editor: any, shapes: any) {
         throw new Error(`Failed to generate image`);
     }
     return image;
+}
+
+function downloadFile(file: File) {
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(file);
+    link.href = url;
+    link.download = file.name;
+    link.click();
+    URL.revokeObjectURL(url);
 }
 
 /*
