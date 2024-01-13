@@ -5,8 +5,11 @@ import {
     copyAs,
     // exportAs
     getSvgAsImage,
+    createShapeId,
+    TLTextShape,
+    TLShapePartial,
 } from "@tldraw/tldraw";
-
+import { fetchEventSource } from "@microsoft/fetch-event-source";
 // There's a guide at the bottom of this file!
 
 export class ScreenshotDragging extends StateNode {
@@ -77,6 +80,43 @@ export class ScreenshotDragging extends StateNode {
             return box.includes(pageBounds);
         });
 
+        const createTextShapeInEditor = (id: string, initialText: string) => {
+            const shapeId = createShapeId(id);
+
+            const center = editor.getViewportPageCenter();
+            editor.createShape({
+                id: shapeId,
+                type: "text",
+                x: center.x,
+                y: center.y,
+                props: {
+                    text: initialText,
+                    font: "sans",
+                },
+            });
+        };
+
+        const updateTextShapeInEditor = (id: string, updatedText: string) => {
+            const shapeId = createShapeId(id);
+            // const shape = editor.getShape<TLTextShape>(shapeId)!;
+            const shapeUpdate: TLShapePartial<TLTextShape> = {
+                id: shapeId,
+                type: "text",
+                props: {
+                    text: updatedText,
+                },
+            };
+
+            // Update the shape
+            editor.updateShapes([shapeUpdate]);
+        };
+
+        const textId = Math.random().toString(36).substring(7);
+
+        createTextShapeInEditor(textId, "Athena is thinking...");
+
+        // const shapeId2 = createShapeId(textId);
+
         if (shapes.length) {
             if (editor.inputs.ctrlKey) {
                 // Copy the shapes to the clipboard
@@ -108,14 +148,60 @@ export class ScreenshotDragging extends StateNode {
             console.log(image);
 
             // convert to base64
-            const base64ImageString = btoa(
-                new Uint8Array(await image.arrayBuffer()).reduce(
-                    (data, byte) => data + String.fromCharCode(byte),
-                    ""
-                )
-            );
+            // const base64ImageString = btoa(
+            //     new Uint8Array(await image.arrayBuffer()).reduce(
+            //         (data, byte) => data + String.fromCharCode(byte),
+            //         ""
+            //     )
+            // );
+            // // console.log(base64ImageString);
 
-            console.log(base64ImageString);
+            const data: string[] = [];
+
+            const serverBaseURL = "http://127.0.0.1:8008";
+
+            const fetchData = async (message: string) => {
+                await fetchEventSource(`${serverBaseURL}/api/vision/stream`, {
+                    method: "POST",
+                    headers: {
+                        Accept: "text/event-stream",
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ message }),
+                    onopen(res): Promise<void> {
+                        if (res.ok && res.status === 200) {
+                            console.log("Connection made ", res);
+                        } else if (
+                            res.status >= 400 &&
+                            res.status < 500 &&
+                            res.status !== 429
+                        ) {
+                            console.log("Client-side error ", res);
+                        }
+                        return Promise.resolve();
+                    },
+                    onmessage(event) {
+                        // console.log(event.data);
+                        // setData((data) => [...data, event.data]);
+                        data.push(event.data);
+                        console.log(event.data);
+                        const concatData = data.join("");
+                        updateTextShapeInEditor(textId, concatData);
+                    },
+                    onclose() {
+                        console.log("Connection closed by the server");
+                        if (data.length > 0) {
+                            const concatData = data.join("");
+                            updateTextShapeInEditor(textId, concatData);
+                        }
+                    },
+                    onerror(err) {
+                        console.log("There was an error from server", err);
+                    },
+                });
+            };
+
+            fetchData("write a 10 word poem");
 
             // Now you can use the base64ImageString variable as needed
             // For example, you could assign it to a state variable or perform further actions

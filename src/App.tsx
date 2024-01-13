@@ -22,7 +22,6 @@ const HOST_URL = "wss://yjs.athenaintelligence.ai";
 export default function App() {
     const [roomId, setRoomId] = useState<string | null>(null);
 
-    // @ts-ignore
     const [data, setData] = useState<string[]>([]);
 
     useEffect(() => {
@@ -50,11 +49,13 @@ export default function App() {
                     return Promise.resolve();
                 },
                 onmessage(event) {
-                    console.log(event.data);
+                    // console.log(event.data);
                     setData((data) => [...data, event.data]);
+                    // console.log(data.join(""));
                 },
                 onclose() {
                     console.log("Connection closed by the server");
+                    // addTextToEditor(data.join(""))
                 },
                 onerror(err) {
                     console.log("There was an error from server", err);
@@ -118,6 +119,11 @@ const customAssetUrls: TLUiAssetUrlOverrides = {
 // [4]
 function ScreenshotBox() {
     const editor = useEditor();
+
+    // // @ts-ignore
+    // const addTextToEditor = (textToInsert: string) => {
+    //     editor.createShape({ type: "text", props: { text: textToInsert } });
+    // };
 
     const screenshotBrush = useValue(
         "screenshot brush",
