@@ -100,6 +100,7 @@ export class ScreenshotDragging extends StateNode {
                 y: center.y,
                 props: {
                     text: initialText,
+                    color: "blue",
                     align: "start",
                     font: "sans",
                     autoSize: false,
