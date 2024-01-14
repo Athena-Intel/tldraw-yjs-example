@@ -1,11 +1,17 @@
 // import { useMakeReal } from '../hooks/useMakeReal'
 
 import * as React from "react";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import Modal from "@mui/material/Modal";
-import Container from "@mui/material/Container";
+
+import {
+    Button,
+    Box,
+    // Typography,
+    Modal,
+    Container,
+    TextField,
+} from "@mui/material";
+
+import { track, useEditor, useToasts } from "@tldraw/tldraw";
 
 const style = {
     position: "absolute",
@@ -18,10 +24,46 @@ const style = {
     p: 4,
 };
 
-export function ExportButton() {
+export const ExportButton = track(() => {
+    const editor = useEditor();
+    const toast = useToasts();
+
+    console.log();
+
     const [open, setOpen] = React.useState(false);
+    const [userRequest, setUserRequest] = React.useState("");
+
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+
+    const handleAskAthena = () => {
+        if (userRequest === "") {
+            return;
+        }
+
+        localStorage.setItem("athenaUserRequest", userRequest);
+
+        handleClose();
+
+        editor.setCurrentTool("screenshot");
+
+        toast.addToast({
+            title: "Drag and select a region to provide Athena with context",
+        });
+    };
+
+    // call handleAskAthena if the user presses enter
+    React.useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Enter") {
+                handleAskAthena();
+            }
+        };
+        document.addEventListener("keydown", handleKeyDown);
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [handleAskAthena]);
 
     return (
         <Container sx={{ p: 1 }}>
@@ -41,21 +83,32 @@ export function ExportButton() {
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
+                disableRestoreFocus={true}
+                // BackdropProps={{ invisible: true }}
             >
                 <Box sx={style}>
-                    <Typography
-                        id="modal-modal-title"
-                        variant="h6"
-                        component="h2"
+                    <TextField
+                        id="outlined-basic"
+                        value={userRequest}
+                        onChange={(e) => setUserRequest(e.target.value)}
+                        label="Enter your request"
+                        variant="outlined"
+                        fullWidth
+                        autoFocus
+                    />
+                    <Button
+                        onClick={handleAskAthena}
+                        disabled={userRequest === ""}
+                        variant="contained"
+                        sx={{
+                            mt: 2,
+                            float: "right",
+                        }}
                     >
-                        Text in a modal
-                    </Typography>
-                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                        Duis mollis, est non commodo luctus, nisi erat porttitor
-                        ligula.
-                    </Typography>
+                        Next
+                    </Button>
                 </Box>
             </Modal>
         </Container>
     );
-}
+});

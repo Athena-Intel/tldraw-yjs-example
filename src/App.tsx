@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import {
     Box,
-    track,
+    // track,
     TLEditorComponents,
     TLUiAssetUrlOverrides,
     TLUiOverrides,
@@ -77,11 +77,6 @@ const customAssetUrls: TLUiAssetUrlOverrides = {
 // [4]
 function ScreenshotBox() {
     const editor = useEditor();
-
-    // // @ts-ignore
-    // const addTextToEditor = (textToInsert: string) => {
-    //     editor.createShape({ type: "text", props: { text: textToInsert } });
-    // };
 
     const screenshotBrush = useValue(
         "screenshot brush",
@@ -164,31 +159,30 @@ export function YjsExample({ roomId }: { roomId: string }) {
     );
 }
 
-// @ts-ignore
-const NameEditor = track(() => {
-    const editor = useEditor();
+// const NameEditor = track(() => {
+//     const editor = useEditor();
 
-    const { color, name } = editor.user.getUserPreferences();
+//     const { color, name } = editor.user.getUserPreferences();
 
-    return (
-        <div style={{ pointerEvents: "all", display: "flex" }}>
-            <input
-                type="color"
-                value={color}
-                onChange={(e) => {
-                    editor.user.updateUserPreferences({
-                        color: e.currentTarget.value,
-                    });
-                }}
-            />
-            <input
-                value={name}
-                onChange={(e) => {
-                    editor.user.updateUserPreferences({
-                        name: e.currentTarget.value,
-                    });
-                }}
-            />
-        </div>
-    );
-});
+//     return (
+//         <div style={{ pointerEvents: "all", display: "flex" }}>
+//             <input
+//                 type="color"
+//                 value={color}
+//                 onChange={(e) => {
+//                     editor.user.updateUserPreferences({
+//                         color: e.currentTarget.value,
+//                     });
+//                 }}
+//             />
+//             <input
+//                 value={name}
+//                 onChange={(e) => {
+//                     editor.user.updateUserPreferences({
+//                         name: e.currentTarget.value,
+//                     });
+//                 }}
+//             />
+//         </div>
+//     );
+// });

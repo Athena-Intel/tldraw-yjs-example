@@ -18,8 +18,7 @@ import { fetchEventSource } from "@microsoft/fetch-event-source";
 const SERVER_BASE_URL =
     import.meta.env.MODE === "development"
         ? "http://127.0.0.1:8008"
-        : "https://causal-staging.onrender.com";
-// : "https://causal-backend.onrender.com";
+        : "https://causal-backend.onrender.com";
 
 export class ScreenshotDragging extends StateNode {
     static override id = "dragging";
@@ -80,7 +79,7 @@ export class ScreenshotDragging extends StateNode {
     // [3]
     override onPointerUp = async () => {
         const { editor } = this;
-        // const toast = useToasts();
+
         const box = this.screenshotBox.get();
 
         // get all shapes contained by or intersecting the box
@@ -125,12 +124,10 @@ export class ScreenshotDragging extends StateNode {
             editor.updateShapes([shapeUpdate]);
         };
 
-        // if (shapes.length === 0) {
-        //     toast.addToast({
-        //         title: "No content found in the screenshot box",
-        //         // description: `${e.message.slice(0, 200)}`,
-        //     });
-        // }
+        if (shapes.length === 0) {
+            this.editor.setCurrentTool("select");
+            return;
+        }
         if (shapes.length) {
             if (editor.inputs.ctrlKey) {
                 // Copy the shapes to the clipboard
@@ -185,8 +182,6 @@ export class ScreenshotDragging extends StateNode {
 
             const data: string[] = [];
 
-            // const SERVER_BASE_URL = "http://127.0.0.1:8008";
-
             const fetchData = async (message: string) => {
                 await fetchEventSource(`${SERVER_BASE_URL}/api/vision/stream`, {
                     method: "POST",
@@ -233,12 +228,11 @@ export class ScreenshotDragging extends StateNode {
                 });
             };
 
-            // fetchData(
-            //     "Concisely respond to the provided image. If there is a request in the image the write a response. If there is no request, simply transcribe or interpret the image. You don't need to describe the colors or background of the image."
-            // );
-            // fetchData("Respond to the user's request in the image. ");
-            // fetchData("What time range is the user referring to?");
-            fetchData("Transcribe this table");
+            const userRequest =
+                localStorage.getItem("athenaUserRequest") ||
+                "Transcribe the image.";
+            console.log(userRequest);
+            fetchData(userRequest);
         }
 
         this.editor.setCurrentTool("select");
