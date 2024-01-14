@@ -13,17 +13,6 @@ import {
 
 import { track, useEditor, useToasts } from "@tldraw/tldraw";
 
-const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: 400,
-    bgcolor: "background.paper",
-    borderRadius: 2,
-    p: 4,
-};
-
 export const ExportButton = track(() => {
     const editor = useEditor();
     const toast = useToasts();
@@ -31,12 +20,17 @@ export const ExportButton = track(() => {
     console.log();
 
     const [open, setOpen] = React.useState(false);
-    const [userRequest, setUserRequest] = React.useState("");
+    const [userInput, setUserInput] = React.useState("");
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    const handleAskAthena = () => {
+    const handleQuickRequest = (request: string) => {
+        // setUserRequest(request);
+        handleAskAthena(request);
+    };
+
+    const handleAskAthena = (userRequest: string) => {
         if (userRequest === "") {
             return;
         }
@@ -56,7 +50,7 @@ export const ExportButton = track(() => {
     React.useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Enter") {
-                handleAskAthena();
+                handleAskAthena(userInput);
             }
         };
         document.addEventListener("keydown", handleKeyDown);
@@ -86,19 +80,63 @@ export const ExportButton = track(() => {
                 disableRestoreFocus={true}
                 // BackdropProps={{ invisible: true }}
             >
-                <Box sx={style}>
+                <Box
+                    sx={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        width: 400,
+                        bgcolor: "background.paper",
+                        borderRadius: 2,
+                        p: 4,
+                    }}
+                >
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            mb: 2,
+                        }}
+                    >
+                        <Button
+                            variant="contained"
+                            onClick={() =>
+                                handleQuickRequest("Analyze the image.")
+                            }
+                        >
+                            Analyze
+                        </Button>
+                        <Button
+                            variant="contained"
+                            onClick={() =>
+                                handleQuickRequest("Transcribe the image.")
+                            }
+                        >
+                            Transcribe
+                        </Button>
+                        <Button
+                            variant="contained"
+                            onClick={() =>
+                                handleQuickRequest("Describe the image.")
+                            }
+                        >
+                            Describe
+                        </Button>
+                    </Box>
+
                     <TextField
                         id="outlined-basic"
-                        value={userRequest}
-                        onChange={(e) => setUserRequest(e.target.value)}
-                        label="Enter your request"
+                        value={userInput}
+                        onChange={(e) => setUserInput(e.target.value)}
+                        label="Enter a specific request"
                         variant="outlined"
                         fullWidth
                         autoFocus
                     />
                     <Button
-                        onClick={handleAskAthena}
-                        disabled={userRequest === ""}
+                        onClick={() => handleAskAthena(userInput)}
+                        disabled={userInput === ""}
                         variant="contained"
                         sx={{
                             mt: 2,

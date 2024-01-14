@@ -213,7 +213,7 @@ export class ScreenshotDragging extends StateNode {
                     },
                     onclose() {
                         console.log("Connection closed by the server");
-                        console.log(data);
+                        // console.log(data);
                         if (data.length > 0) {
                             const concatData = data.join("");
                             updateTextShapeInEditor(textId, concatData);
