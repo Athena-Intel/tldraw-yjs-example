@@ -18,7 +18,8 @@ import { fetchEventSource } from "@microsoft/fetch-event-source";
 const SERVER_BASE_URL =
     import.meta.env.MODE === "development"
         ? "http://127.0.0.1:8008"
-        : "https://causal-backend.onrender.com";
+        : "https://causal-staging.onrender.com";
+// : "https://causal-backend.onrender.com";
 
 export class ScreenshotDragging extends StateNode {
     static override id = "dragging";
@@ -192,6 +193,7 @@ export class ScreenshotDragging extends StateNode {
                     headers: {
                         Accept: "text/event-stream",
                         "Content-Type": "application/json",
+                        Origin: "http://localhost:5173",
                     },
                     body: JSON.stringify({
                         message: message,
