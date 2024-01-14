@@ -166,7 +166,7 @@ export class ScreenshotDragging extends StateNode {
                     bounds: box,
                 }
             );
-            const file = new File([blob], "tmp", { type: blob.type });
+            const file = new File([blob], "tmpscreenshot", { type: blob.type });
 
             if (import.meta.env.MODE === "development") {
                 downloadFile(file);
@@ -259,8 +259,8 @@ async function exportToBlob(
     }
     const image = await getSvgAsImage(svg, editor.environment.isSafari, {
         type: "png",
-        quality: 1,
-        scale: 1,
+        quality: 3,
+        scale: 3,
     });
     if (!image) {
         throw new Error(`Failed to generate image`);
