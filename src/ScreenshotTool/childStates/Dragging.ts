@@ -193,7 +193,6 @@ export class ScreenshotDragging extends StateNode {
                     headers: {
                         Accept: "text/event-stream",
                         "Content-Type": "application/json",
-                        Origin: "http://localhost:5173",
                     },
                     body: JSON.stringify({
                         message: message,
