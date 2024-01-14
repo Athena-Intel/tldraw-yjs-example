@@ -118,10 +118,12 @@ export const ExportButton = track(() => {
                         <Button
                             variant="contained"
                             onClick={() =>
-                                handleQuickRequest("Describe the image.")
+                                handleQuickRequest(
+                                    "Respond to the request described in the image."
+                                )
                             }
                         >
-                            Describe
+                            Execute
                         </Button>
                     </Box>
 
