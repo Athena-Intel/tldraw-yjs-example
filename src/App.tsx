@@ -7,7 +7,7 @@ import {
     TLUiOverrides,
     Tldraw,
     Vec,
-    toolbarItem,
+    // toolbarItem,
     useEditor,
     useValue,
 } from "@tldraw/tldraw";
@@ -61,10 +61,10 @@ const customUiOverrides: TLUiOverrides = {
             },
         };
     },
-    toolbar: (_editor, toolbarItems, { tools }) => {
-        toolbarItems.splice(4, 0, toolbarItem(tools.screenshot));
-        return toolbarItems;
-    },
+    // toolbar: (_editor, toolbarItems, { tools }) => {
+    //     toolbarItems.splice(4, 0, toolbarItem(tools.screenshot));
+    //     return toolbarItems;
+    // },
 };
 
 // [3]
