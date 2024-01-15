@@ -1,16 +1,22 @@
 // import { useMakeReal } from '../hooks/useMakeReal'
 
 import * as React from "react";
-
 import {
     Button,
     Box,
-    // Typography,
     Modal,
-    Container,
+    Stack,
     TextField,
+    Drawer,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    Divider,
+    ListItemButton,
+    Typography,
 } from "@mui/material";
-
+import AddIcon from "@mui/icons-material/Add";
 import { track, useEditor, useToasts } from "@tldraw/tldraw";
 
 export const ExportButton = track(() => {
@@ -21,9 +27,13 @@ export const ExportButton = track(() => {
 
     const [open, setOpen] = React.useState(false);
     const [userInput, setUserInput] = React.useState("");
+    const [openDrawer, setOpenDrawer] = React.useState(false);
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+
+    const handleOpenDrawer = () => setOpenDrawer(true);
+    const handleCloseDrawer = () => setOpenDrawer(false);
 
     const handleQuickRequest = (request: string) => {
         // setUserRequest(request);
@@ -57,10 +67,63 @@ export const ExportButton = track(() => {
         return () => {
             document.removeEventListener("keydown", handleKeyDown);
         };
-    }, [handleAskAthena]);
+    }, [handleAskAthena, userInput]);
+
+    const list = () => (
+        <Box
+            sx={{ width: "auto" }}
+            role="presentation"
+            onClick={handleCloseDrawer}
+            onKeyDown={handleCloseDrawer}
+        >
+            <List>
+                {["Document", "Dataset", "Query", "Chart"].map(
+                    (text, index) => (
+                        <ListItem key={text} disablePadding>
+                            <ListItemButton>
+                                <ListItemIcon>
+                                    {index % 2 === 0 ? (
+                                        <AddIcon />
+                                    ) : (
+                                        <AddIcon />
+                                    )}
+                                </ListItemIcon>
+                                <ListItemText primary={text} />
+                            </ListItemButton>
+                        </ListItem>
+                    )
+                )}
+            </List>
+            <Divider />
+            <List>
+                {["Conversation", "Report", "Notebook"].map((text, index) => (
+                    <ListItem key={text} disablePadding>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                {index % 2 === 0 ? <AddIcon /> : <AddIcon />}
+                            </ListItemIcon>
+                            <ListItemText primary={text} />
+                        </ListItemButton>
+                    </ListItem>
+                ))}
+            </List>
+        </Box>
+    );
 
     return (
-        <Container sx={{ p: 1 }}>
+        <Stack direction="row" spacing={1} p={1}>
+            <Button
+                variant="outlined"
+                onClick={() => handleOpenDrawer()}
+                style={{
+                    cursor: "pointer",
+                    zIndex: 100000,
+                    pointerEvents: "all",
+                }}
+                endIcon={<AddIcon sx={{ mb: "3px" }} />}
+            >
+                Add
+            </Button>
             <Button
                 onClick={handleOpen}
                 style={{
@@ -72,6 +135,7 @@ export const ExportButton = track(() => {
             >
                 Ask Athena
             </Button>
+
             <Modal
                 open={open}
                 onClose={handleClose}
@@ -131,7 +195,7 @@ export const ExportButton = track(() => {
                         id="outlined-basic"
                         value={userInput}
                         onChange={(e) => setUserInput(e.target.value)}
-                        label="Enter a specific request"
+                        label="Custom Request"
                         variant="outlined"
                         fullWidth
                         autoFocus
@@ -149,6 +213,27 @@ export const ExportButton = track(() => {
                     </Button>
                 </Box>
             </Modal>
-        </Container>
+            <Drawer
+                anchor="right"
+                open={openDrawer}
+                onClose={handleCloseDrawer}
+            >
+                <Box
+                    sx={{
+                        width: 400,
+                        height: "100%",
+                        bgcolor: "background.paper",
+                        borderRadius: 2,
+                        p: 4,
+                    }}
+                >
+                    <Typography variant="h6">Athena Objects</Typography>
+                    <Typography variant="body2">
+                        Add an object to your workspace.
+                    </Typography>
+                    {list()}
+                </Box>
+            </Drawer>
+        </Stack>
     );
 });
