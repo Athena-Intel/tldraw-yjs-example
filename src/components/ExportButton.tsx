@@ -12,40 +12,82 @@ import {
     ListItem,
     ListItemIcon,
     ListItemText,
-    Divider,
     ListItemButton,
     Typography,
+    ToggleButton,
+    ToggleButtonGroup,
+    Divider,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { track, useEditor, useToasts } from "@tldraw/tldraw";
+
+const ANALYZE_PROMPT = `
+Please provide an analysis and interpretation of the data presented in the image. Consider the following questions in your analysis:
+
+What key patterns or trends can you identify from the data?
+What are the highest and lowest values presented and what might be the reasons for these extremes?
+What insights can be drawn from the data?
+How might the data inform decision-making or strategy in its relevant context?"
+`;
+
+type AthenaRequestType = "analyze" | "transcribe" | "execute";
+
+type EnabledRequestType = AthenaRequestType | "custom";
+
+const requestPrompts: Record<AthenaRequestType, string> = {
+    analyze: ANALYZE_PROMPT,
+    transcribe: "Please transcribe the text in the image.",
+    execute: "Please execute the code in the image.",
+};
 
 export const ExportButton = track(() => {
     const editor = useEditor();
     const toast = useToasts();
 
-    console.log();
-
     const [open, setOpen] = React.useState(false);
-    const [userInput, setUserInput] = React.useState("");
-    const [openDrawer, setOpenDrawer] = React.useState(false);
 
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    const DEFAULT_REQUEST_TYPE = "analyze";
+    const [requestType, setRequestType] =
+        React.useState<EnabledRequestType>(DEFAULT_REQUEST_TYPE);
+    const [request, setRequest] = React.useState<string>(
+        requestPrompts[DEFAULT_REQUEST_TYPE]
+    );
+
+    const [responseLength, setResponseLength] = React.useState("standard");
+
+    const [openDrawer, setOpenDrawer] = React.useState(false);
 
     const handleOpenDrawer = () => setOpenDrawer(true);
     const handleCloseDrawer = () => setOpenDrawer(false);
 
-    const handleQuickRequest = (request: string) => {
-        // setUserRequest(request);
-        handleAskAthena(request);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
+    const handleChangeRequestType = (
+        e: React.MouseEvent<HTMLElement>,
+        value: string
+    ) => {
+        setRequestType(value as EnabledRequestType);
+
+        if (value === "custom") {
+            setRequest("");
+        } else {
+            setRequest(requestPrompts[value as AthenaRequestType]);
+        }
     };
 
-    const handleAskAthena = (userRequest: string) => {
-        if (userRequest === "") {
-            return;
-        }
+    const handleAskAthena = () => {
+        const userRequest =
+            requestType === "custom" ? request : requestPrompts[requestType];
 
-        localStorage.setItem("athenaUserRequest", userRequest);
+        const responseLengthText = `Please provide a ${responseLength} response length.`;
+
+        const appendToRequest = `Don't reference "the image" just say "it" or "this". Save any limitations or caveats for the end of the request.`;
+
+        localStorage.setItem(
+            "athenaUserRequest",
+            userRequest + "\n\n" + appendToRequest + "\n\n" + responseLengthText
+        );
 
         handleClose();
 
@@ -60,14 +102,14 @@ export const ExportButton = track(() => {
     React.useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Enter") {
-                handleAskAthena(userInput);
+                handleAskAthena();
             }
         };
         document.addEventListener("keydown", handleKeyDown);
         return () => {
             document.removeEventListener("keydown", handleKeyDown);
         };
-    }, [handleAskAthena, userInput]);
+    }, []);
 
     const list = () => (
         <Box
@@ -150,59 +192,76 @@ export const ExportButton = track(() => {
                         top: "50%",
                         left: "50%",
                         transform: "translate(-50%, -50%)",
-                        width: 400,
                         bgcolor: "background.paper",
                         borderRadius: 2,
                         p: 4,
                     }}
                 >
-                    <Box
-                        sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            mb: 2,
-                        }}
+                    <Typography variant="h6">Request</Typography>
+                    <ToggleButtonGroup
+                        value={requestType}
+                        exclusive
+                        onChange={handleChangeRequestType}
+                        aria-label="request type"
                     >
-                        <Button
-                            variant="contained"
-                            onClick={() =>
-                                handleQuickRequest("Analyze the image.")
-                            }
-                        >
+                        <ToggleButton value="analyze" aria-label="analyze">
                             Analyze
-                        </Button>
-                        <Button
-                            variant="contained"
-                            onClick={() =>
-                                handleQuickRequest("Transcribe the image.")
-                            }
+                        </ToggleButton>
+                        <ToggleButton
+                            value="transcribe."
+                            aria-label="transcribe"
                         >
                             Transcribe
-                        </Button>
-                        <Button
-                            variant="contained"
-                            onClick={() =>
-                                handleQuickRequest(
-                                    "Respond to the request described in the image."
-                                )
-                            }
-                        >
+                        </ToggleButton>
+                        <ToggleButton value="execute" aria-label="execute">
                             Execute
-                        </Button>
-                    </Box>
+                        </ToggleButton>
+                        <ToggleButton value="custom" aria-label="custom">
+                            Custom
+                        </ToggleButton>
+                    </ToggleButtonGroup>
 
-                    <TextField
-                        id="outlined-basic"
-                        value={userInput}
-                        onChange={(e) => setUserInput(e.target.value)}
-                        label="Custom Request"
-                        variant="outlined"
-                        fullWidth
-                        autoFocus
-                    />
+                    {/* Conditionally render the TextField for custom request */}
+                    {requestType === "custom" && (
+                        <TextField
+                            id="outlined-basic"
+                            value={request}
+                            onChange={(e) => setRequest(e.target.value)}
+                            label="Custom Request"
+                            variant="outlined"
+                            fullWidth
+                            autoFocus
+                        />
+                    )}
+
+                    <Divider />
+
+                    <Typography variant="h6">Response</Typography>
+                    <ToggleButtonGroup
+                        value={responseLength}
+                        exclusive
+                        onChange={(e, value) => setResponseLength(value)}
+                        aria-label="text alignment"
+                    >
+                        <ToggleButton
+                            value="very concise"
+                            aria-label="left aligned"
+                        >
+                            Concise
+                        </ToggleButton>
+                        <ToggleButton value="standard" aria-label="centered">
+                            Default
+                        </ToggleButton>
+                        <ToggleButton
+                            value="detailed"
+                            aria-label="right aligned"
+                        >
+                            Detailed
+                        </ToggleButton>
+                    </ToggleButtonGroup>
                     <Button
-                        onClick={() => handleAskAthena(userInput)}
-                        disabled={userInput === ""}
+                        onClick={() => handleAskAthena()}
+                        disabled={request === ""}
                         variant="contained"
                         sx={{
                             mt: 2,

@@ -104,7 +104,7 @@ export class ScreenshotDragging extends StateNode {
                     align: "start",
                     font: "sans",
                     autoSize: false,
-                    w: 600,
+                    w: 800,
                 },
             });
             // const shape = editor.getShape(shapeId);
