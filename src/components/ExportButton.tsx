@@ -197,7 +197,9 @@ export const ExportButton = track(() => {
                         p: 4,
                     }}
                 >
-                    <Typography variant="h6">Request</Typography>
+                    <Typography variant="h6" p={1}>
+                        Request
+                    </Typography>
                     <ToggleButtonGroup
                         value={requestType}
                         exclusive
@@ -236,7 +238,9 @@ export const ExportButton = track(() => {
 
                     <Divider />
 
-                    <Typography variant="h6">Response</Typography>
+                    <Typography variant="body1" p={1}>
+                        Response Length
+                    </Typography>
                     <ToggleButtonGroup
                         value={responseLength}
                         exclusive
