@@ -52,6 +52,7 @@ export const ExportButton = track(() => {
     const [request, setRequest] = React.useState<string>(
         requestPrompts[DEFAULT_REQUEST_TYPE]
     );
+    const [customRequest, setCustomRequest] = React.useState<string>("");
 
     const [responseLength, setResponseLength] = React.useState("standard");
     const [outputFormat, setOutputFormat] = React.useState<string>("markdown");
@@ -64,21 +65,6 @@ export const ExportButton = track(() => {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    const handleChangeRequestType = (
-        _e: React.MouseEvent<HTMLElement>,
-        value: string
-    ) => {
-        setRequestType(value as EnabledRequestType);
-
-        if (value === "custom") {
-            setRequest("");
-        } else {
-            setRequest(requestPrompts[value as AthenaRequestType]);
-        }
-        setRequestType(value as EnabledRequestType);
-        console.log(value);
-    };
-
     const asyncLocalStorage = {
         async setItem(key: string, value: string): Promise<void> {
             await null;
@@ -90,22 +76,23 @@ export const ExportButton = track(() => {
         },
     };
 
-    const handleAskAthena = async () => {
-        const userRequest =
-            requestType === "custom" ? request : requestPrompts[requestType];
-
-        const responseLengthText = `Please provide a ${responseLength} response length.`;
+    const updateLocalStorage = async (
+        request: string,
+        responseLength: string,
+        outputFormat: string
+    ) => {
+        const appendToRequest = `Don't reference "the image" just say "it" or "this". Save any limitations or caveats for the end of the request.`;
 
         const outputFormatText =
             outputFormat === "markdown"
                 ? `Please provide a markdown response, except don't wrap tables in markdown code block.`
                 : `Please provide a text response (no markdown).`;
 
-        const appendToRequest = `Don't reference "the image" just say "it" or "this". Save any limitations or caveats for the end of the request.`;
+        const responseLengthText = `Please provide a ${responseLength} response length.`;
 
         await asyncLocalStorage.setItem(
             "athenaUserRequest",
-            userRequest +
+            request +
                 "\n\n" +
                 appendToRequest +
                 "\n\n" +
@@ -115,7 +102,24 @@ export const ExportButton = track(() => {
         );
 
         await asyncLocalStorage.setItem("athenaOutputFormat", outputFormat);
+    };
 
+    // when requestType, request, or responseLength changes, update the localStorage
+    React.useEffect(() => {
+        const update = async () => {
+            const userRequest =
+                requestType === "custom"
+                    ? customRequest
+                    : requestPrompts[requestType];
+
+            await updateLocalStorage(userRequest, responseLength, outputFormat);
+            setRequest(userRequest);
+        };
+
+        update();
+    }, [requestType, customRequest, responseLength, outputFormat]);
+
+    const handleAskAthena = async () => {
         handleClose();
 
         editor.setCurrentTool("screenshot");
@@ -125,10 +129,9 @@ export const ExportButton = track(() => {
         });
     };
 
-    // call handleAskAthena if the user presses enter
     React.useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === "Enter") {
+            if (e.key === "Enter" && open && request !== "") {
                 handleAskAthena();
             }
         };
@@ -231,7 +234,9 @@ export const ExportButton = track(() => {
                     <ToggleButtonGroup
                         value={requestType}
                         exclusive
-                        onChange={handleChangeRequestType}
+                        onChange={(_e, value) => {
+                            setRequestType(value as EnabledRequestType);
+                        }}
                         aria-label="request type"
                     >
                         <ToggleButton value="analyze" aria-label="analyze">
@@ -255,8 +260,8 @@ export const ExportButton = track(() => {
                     {requestType === "custom" && (
                         <TextField
                             id="outlined-basic"
-                            value={request}
-                            onChange={(e) => setRequest(e.target.value)}
+                            value={customRequest}
+                            onChange={(e) => setCustomRequest(e.target.value)}
                             label="Custom Request"
                             variant="outlined"
                             fullWidth
