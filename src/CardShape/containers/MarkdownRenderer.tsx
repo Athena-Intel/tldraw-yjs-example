@@ -114,7 +114,7 @@ const MarkdownRenderer = ({ children, content }: MarkdownRendererProps) => {
                 )}
                 {isCopied ? "Copied!" : "Copy"}
             </Button>
-            <MarkdownStyleContainer>{children}</MarkdownStyleContainer>;
+            <MarkdownStyleContainer>{children}</MarkdownStyleContainer>
         </div>
     );
 };
