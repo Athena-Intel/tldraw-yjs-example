@@ -103,9 +103,8 @@ export class CardShapeUtil extends ShapeUtil<ICardShape> {
                     // zIndex: 99999,
                     pointerEvents: "all",
                     // backgroundColor: theme[shape.props.color].semi,
-                    // light grey color
+                    backgroundColor: "white",
                     color: "#333333",
-                    // light grey shadow
                     boxShadow: "0 0 0.5rem 0.25rem rgba(0, 0, 0, 0.1)",
                     borderRadius: "0.5rem",
                     overflow: "hidden",

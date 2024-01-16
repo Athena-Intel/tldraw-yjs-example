@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-// import { stringify } from "flatted";
-
 import { Button, Typography, Stack } from "@mui/material";
 import { Table } from "@tremor/react";
+
 // import useAuth from "src/hooks/useAuth";
 // import UploadDialog from "./UploadDialog";
+// import { stringify } from "flatted";
 
 interface TableComponentProps {
     children: React.ReactNode;
@@ -34,7 +34,7 @@ export function TableContainer(props: TableComponentProps) {
     };
 
     const downloadCSV = (data: TableData[]) => {
-        const replacer = (key: any, value: any) =>
+        const replacer = (_key: any, value: any) =>
             value === null ? "" : value; // specify how you want to handle null values here
         const header = Object.keys(data[0]);
         const csv = [
