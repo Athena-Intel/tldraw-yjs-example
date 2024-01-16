@@ -112,8 +112,8 @@ export class CardShapeUtil extends ShapeUtil<ICardShape> {
                     overflow: "hidden",
                 }}
             >
-                {shape.props.isComplete && (
-                    <LinearProgress sx={{ paddingTop: "1px" }} />
+                {!shape.props.isComplete && (
+                    <LinearProgress sx={{ paddingTop: "5px" }} />
                 )}
 
                 <div
