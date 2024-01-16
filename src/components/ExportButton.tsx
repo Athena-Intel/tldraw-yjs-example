@@ -65,7 +65,7 @@ export const ExportButton = track(() => {
     const handleClose = () => setOpen(false);
 
     const handleChangeRequestType = (
-        e: React.MouseEvent<HTMLElement>,
+        _e: React.MouseEvent<HTMLElement>,
         value: string
     ) => {
         setRequestType(value as EnabledRequestType);
@@ -265,7 +265,7 @@ export const ExportButton = track(() => {
                     <ToggleButtonGroup
                         value={responseLength}
                         exclusive
-                        onChange={(e, value) => setResponseLength(value)}
+                        onChange={(_e, value) => setResponseLength(value)}
                         aria-label="text alignment"
                     >
                         <ToggleButton
@@ -297,7 +297,7 @@ export const ExportButton = track(() => {
                     <ToggleButtonGroup
                         value={outputFormat}
                         exclusive
-                        onChange={(e, value) => setOutputFormat(value)}
+                        onChange={(_e, value) => setOutputFormat(value)}
                         aria-label="output format"
                     >
                         <ToggleButton value="text" aria-label="text">
