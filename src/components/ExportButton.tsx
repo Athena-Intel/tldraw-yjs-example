@@ -77,7 +77,18 @@ export const ExportButton = track(() => {
         }
     };
 
-    const handleAskAthena = () => {
+    const asyncLocalStorage = {
+        async setItem(key: string, value: string): Promise<void> {
+            await null;
+            return localStorage.setItem(key, value);
+        },
+        async getItem(key: string): Promise<string | null> {
+            await null;
+            return localStorage.getItem(key);
+        },
+    };
+
+    const handleAskAthena = async () => {
         const userRequest =
             requestType === "custom" ? request : requestPrompts[requestType];
 
@@ -90,7 +101,7 @@ export const ExportButton = track(() => {
 
         const appendToRequest = `Don't reference "the image" just say "it" or "this". Save any limitations or caveats for the end of the request.`;
 
-        localStorage.setItem(
+        await asyncLocalStorage.setItem(
             "athenaUserRequest",
             userRequest +
                 "\n\n" +
@@ -101,7 +112,7 @@ export const ExportButton = track(() => {
                 responseLengthText
         );
 
-        localStorage.setItem("athenaOutputFormat", outputFormat);
+        await asyncLocalStorage.setItem("athenaOutputFormat", outputFormat);
 
         handleClose();
 

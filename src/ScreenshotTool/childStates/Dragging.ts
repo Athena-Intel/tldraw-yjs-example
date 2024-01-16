@@ -20,6 +20,17 @@ const SERVER_BASE_URL =
         ? "http://127.0.0.1:8008"
         : "https://causal-backend.onrender.com";
 
+const asyncLocalStorage = {
+    async setItem(key: string, value: string): Promise<void> {
+        await null;
+        return localStorage.setItem(key, value);
+    },
+    async getItem(key: string): Promise<string | null> {
+        await null;
+        return localStorage.getItem(key);
+    },
+};
+
 export class ScreenshotDragging extends StateNode {
     static override id = "dragging";
 
@@ -89,7 +100,9 @@ export class ScreenshotDragging extends StateNode {
             return box.includes(pageBounds);
         });
 
-        const athenaOutputFormat = localStorage.getItem("athenaOutputFormat");
+        const athenaOutputFormat = await asyncLocalStorage.getItem(
+            "athenaOutputFormat"
+        );
         const shapeType = athenaOutputFormat === "text" ? "text" : "card";
 
         const createTextShapeInEditor = (id: string, initialText: string) => {
@@ -264,7 +277,7 @@ export class ScreenshotDragging extends StateNode {
             };
 
             const userRequest =
-                localStorage.getItem("athenaUserRequest") ||
+                (await asyncLocalStorage.getItem("athenaUserRequest")) ||
                 "Transcribe the image.";
             console.log(userRequest);
             fetchData(userRequest);
