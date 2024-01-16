@@ -7,7 +7,7 @@ import {
     TLUiOverrides,
     Tldraw,
     Vec,
-    toolbarItem,
+    // toolbarItem,
     useEditor,
     useValue,
 } from "@tldraw/tldraw";
