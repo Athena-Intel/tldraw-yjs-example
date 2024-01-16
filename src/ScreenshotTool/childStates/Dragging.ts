@@ -6,8 +6,8 @@ import {
     Editor,
     getSvgAsImage,
     createShapeId,
-    TLTextShape,
-    TLShapePartial,
+    // TLTextShape,
+    // TLShapePartial,
     TLSvgOptions,
     TLShapeId,
     // useToasts,
@@ -92,21 +92,39 @@ export class ScreenshotDragging extends StateNode {
         const createTextShapeInEditor = (id: string, initialText: string) => {
             const shapeId = createShapeId(id);
 
+            const athenaOutputFormat =
+                localStorage.getItem("athenaOutputFormat");
+            // const shapeType = athenaOutputFormat === "text" ? "text" : "card";
+
             const center = editor.getViewportPageCenter();
-            editor.createShape({
-                id: shapeId,
-                type: "text",
-                x: center.x,
-                y: center.y,
-                props: {
-                    text: initialText,
-                    color: "black",
-                    align: "start",
-                    font: "sans",
-                    autoSize: false,
-                    w: 800,
-                },
-            });
+
+            if (athenaOutputFormat === "text") {
+                editor.createShape({
+                    id: shapeId,
+                    type: "text",
+                    x: center.x,
+                    y: center.y,
+                    props: {
+                        text: initialText,
+                        color: "black",
+                        align: "start",
+                        font: "sans",
+                        autoSize: false,
+                        w: 800,
+                    },
+                });
+            } else {
+                editor.createShape({
+                    id: shapeId,
+                    type: "card",
+                    x: center.x,
+                    y: center.y,
+                    props: {
+                        text: initialText,
+                    },
+                });
+            }
+
             // const shape = editor.getShape(shapeId);
             // console.log(shape);
         };
@@ -114,14 +132,23 @@ export class ScreenshotDragging extends StateNode {
         const updateTextShapeInEditor = (id: string, updatedText: string) => {
             const shapeId = createShapeId(id);
 
-            const shapeUpdate: TLShapePartial<TLTextShape> = {
+            // const shapeUpdate: TLShapePartial<TLTextShape> = {
+            //     id: shapeId,
+            //     type: "text",
+            //     props: {
+            //         text: updatedText,
+            //         // font: "sans",
+            //     },
+            // };
+            const shapeUpdate = {
                 id: shapeId,
                 type: "text",
                 props: {
                     text: updatedText,
-                    font: "sans",
+                    // font: "sans",
                 },
             };
+
             editor.updateShapes([shapeUpdate]);
         };
 
@@ -213,9 +240,13 @@ export class ScreenshotDragging extends StateNode {
                     },
                     onclose() {
                         console.log("Connection closed by the server");
-                        // console.log(data);
                         if (data.length > 0) {
-                            const concatData = data.join("");
+                            console.log(data);
+                            // if the element is "" then you should concat a \n
+                            const newLineMappingData = data.map((element) =>
+                                element === "" ? "\n" : element
+                            );
+                            const concatData = newLineMappingData.join("");
                             updateTextShapeInEditor(textId, concatData);
                         }
                     },

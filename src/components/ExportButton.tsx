@@ -37,7 +37,7 @@ type EnabledRequestType = AthenaRequestType | "custom";
 const requestPrompts: Record<AthenaRequestType, string> = {
     analyze: ANALYZE_PROMPT,
     transcribe: "Please transcribe the text in the image.",
-    execute: "Please execute the code in the image.",
+    execute: "Please complete the task depicted in the image, if possible.",
 };
 
 export const ExportButton = track(() => {
@@ -54,6 +54,7 @@ export const ExportButton = track(() => {
     );
 
     const [responseLength, setResponseLength] = React.useState("standard");
+    const [outputFormat, setOutputFormat] = React.useState<string>("markdown");
 
     const [openDrawer, setOpenDrawer] = React.useState(false);
 
@@ -82,12 +83,25 @@ export const ExportButton = track(() => {
 
         const responseLengthText = `Please provide a ${responseLength} response length.`;
 
+        const outputFormatText =
+            outputFormat === "markdown"
+                ? `Please provide a markdown response.`
+                : `Please provide a text response (no markdown).`;
+
         const appendToRequest = `Don't reference "the image" just say "it" or "this". Save any limitations or caveats for the end of the request.`;
 
         localStorage.setItem(
             "athenaUserRequest",
-            userRequest + "\n\n" + appendToRequest + "\n\n" + responseLengthText
+            userRequest +
+                "\n\n" +
+                appendToRequest +
+                "\n\n" +
+                outputFormatText +
+                "\n\n" +
+                responseLengthText
         );
+
+        localStorage.setItem("athenaOutputFormat", outputFormat);
 
         handleClose();
 
@@ -233,10 +247,17 @@ export const ExportButton = track(() => {
                             variant="outlined"
                             fullWidth
                             autoFocus
+                            sx={{
+                                mt: 2,
+                            }}
                         />
                     )}
 
-                    <Divider />
+                    <Divider
+                        sx={{
+                            mt: 2,
+                        }}
+                    />
 
                     <Typography variant="body1" p={1}>
                         Response Length
@@ -261,6 +282,29 @@ export const ExportButton = track(() => {
                             aria-label="right aligned"
                         >
                             Detailed
+                        </ToggleButton>
+                    </ToggleButtonGroup>
+
+                    <Divider
+                        sx={{
+                            mt: 2,
+                        }}
+                    />
+                    <Typography variant="body2" p={1}>
+                        Output
+                    </Typography>
+                    {/* Togglebutton group for Text or Markdown */}
+                    <ToggleButtonGroup
+                        value={outputFormat}
+                        exclusive
+                        onChange={(e, value) => setOutputFormat(value)}
+                        aria-label="output format"
+                    >
+                        <ToggleButton value="text" aria-label="text">
+                            Text
+                        </ToggleButton>
+                        <ToggleButton value="markdown" aria-label="markdown">
+                            Markdown
                         </ToggleButton>
                     </ToggleButtonGroup>
                     <Button

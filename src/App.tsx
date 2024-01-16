@@ -7,15 +7,18 @@ import {
     TLUiOverrides,
     Tldraw,
     Vec,
-    // toolbarItem,
+    toolbarItem,
     useEditor,
     useValue,
 } from "@tldraw/tldraw";
+import "./tailwind.css";
 import "@tldraw/tldraw/tldraw.css";
 import { useYjsStore } from "./useYjsStore";
 import { ScreenshotTool } from "./ScreenshotTool/ScreenshotTool";
 import { ScreenshotDragging } from "./ScreenshotTool/childStates/Dragging";
 import { ExportButton } from "./components/ExportButton";
+import { CardShapeTool } from "./CardShape/CardShapeTool";
+import { CardShapeUtil } from "./CardShape/CardShapeUtil";
 // import { fetchEventSource } from "@microsoft/fetch-event-source";
 
 const HOST_URL = "wss://yjs.athenaintelligence.ai";
@@ -42,7 +45,8 @@ export default function App() {
     }
 }
 // [1]
-const customTools = [ScreenshotTool];
+const customShapeUtils = [CardShapeUtil];
+const customTools = [ScreenshotTool, CardShapeTool];
 
 // [2]
 const customUiOverrides: TLUiOverrides = {
@@ -59,12 +63,23 @@ const customUiOverrides: TLUiOverrides = {
                     editor.setCurrentTool("screenshot");
                 },
             },
+            card: {
+                id: "card",
+                icon: "color",
+                label: "Card",
+                kbd: "c",
+                readonlyOk: false,
+                onSelect: () => {
+                    editor.setCurrentTool("card");
+                },
+            },
         };
     },
-    // toolbar: (_editor, toolbarItems, { tools }) => {
-    //     toolbarItems.splice(4, 0, toolbarItem(tools.screenshot));
-    //     return toolbarItems;
-    // },
+    toolbar: (_editor, toolbarItems, { tools }) => {
+        // toolbarItems.splice(4, 0, toolbarItem(tools.screenshot));
+        toolbarItems.splice(4, 0, toolbarItem(tools.card));
+        return toolbarItems;
+    },
 };
 
 // [3]
@@ -134,6 +149,7 @@ export function YjsExample({ roomId }: { roomId: string }) {
     const store = useYjsStore({
         roomId: roomId,
         hostUrl: HOST_URL,
+        shapeUtils: customShapeUtils,
     });
 
     return (
@@ -150,6 +166,7 @@ export function YjsExample({ roomId }: { roomId: string }) {
                         {/* <NameEditor /> */}
                     </div>
                 }
+                shapeUtils={customShapeUtils}
                 tools={customTools}
                 overrides={customUiOverrides}
                 assetUrls={customAssetUrls}
