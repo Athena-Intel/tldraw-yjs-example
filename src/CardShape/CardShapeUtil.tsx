@@ -8,8 +8,19 @@ import {
 } from "@tldraw/tldraw";
 // import { useState } from "react";
 import Markdown from "markdown-to-jsx";
-import MarkdownStyleContainer from "./MarkdownStyleContainer";
-import PreBlock from "./CodeComponent";
+import {
+    TableHead,
+    TableHeaderCell,
+    TableBody,
+    TableRow,
+    TableCell,
+} from "@tremor/react";
+import MarkdownStyleContainer from "./containers/MarkdownStyleContainer";
+import ListComponent from "./containers/ListComponent";
+import OrderedListComponent from "./containers/OrderedListComponent";
+import TableContainer from "./containers/TableContainer";
+import PreBlock from "./containers/CodeComponent";
+
 import { cardShapeMigrations } from "./card-shape-migrations";
 import { cardShapeProps } from "./card-shape-props";
 import { ICardShape } from "./card-shape-types";
@@ -86,7 +97,7 @@ export class CardShapeUtil extends ShapeUtil<ICardShape> {
                     border: "1px solid black",
                     display: "flex",
                     flexDirection: "column",
-                    padding: "1rem",
+                    // padding: "1rem",
                     // alignItems: "center",
                     // justifyContent: "center",
                     // zIndex: 99999,
@@ -100,24 +111,39 @@ export class CardShapeUtil extends ShapeUtil<ICardShape> {
                     overflow: "hidden",
                 }}
             >
-                <div className="markdown prose w-full break-words dark:prose-invert light">
+                <div
+                    className="markdown prose w-full break-words dark:prose-invert light"
+                    style={{ padding: "1rem" }}
+                >
                     <MarkdownStyleContainer>
                         <Markdown
                             options={{
                                 wrapper: "article",
                                 overrides: {
-                                    // p: (props) =>
-                                    //     props.children.some(
-                                    //         (child: any) =>
-                                    //             typeof child === "string"
-                                    //     ) ? (
-                                    //         <p {...props} />
-                                    //     ) : (
-                                    //         <div {...props} />
-                                    //     ),
+                                    p: (props) =>
+                                        props.children.some(
+                                            (child: any) =>
+                                                typeof child === "string"
+                                        ) ? (
+                                            <p {...props} />
+                                        ) : (
+                                            <div {...props} />
+                                        ),
                                     pre: {
                                         component: PreBlock,
                                     },
+                                    ul: {
+                                        component: ListComponent,
+                                    },
+                                    ol: {
+                                        component: OrderedListComponent,
+                                    },
+                                    td: TableCell,
+                                    tbody: TableBody,
+                                    table: TableContainer,
+                                    thead: TableHead,
+                                    th: TableHeaderCell,
+                                    tr: TableRow,
                                 },
                             }}
                         >

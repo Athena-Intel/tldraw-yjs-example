@@ -85,7 +85,7 @@ export const ExportButton = track(() => {
 
         const outputFormatText =
             outputFormat === "markdown"
-                ? `Please provide a markdown response.`
+                ? `Please provide a markdown response, except don't wrap tables in markdown code block.`
                 : `Please provide a text response (no markdown).`;
 
         const appendToRequest = `Don't reference "the image" just say "it" or "this". Save any limitations or caveats for the end of the request.`;

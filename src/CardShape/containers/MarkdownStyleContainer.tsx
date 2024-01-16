@@ -11,35 +11,42 @@ const MarkdownStyleContainer = styled("span")(({ theme }) => ({
     },
     "& h1": {
         ...theme.typography.h1,
+        fontSize: "3rem",
         marginTop: 16,
         marginBottom: 16,
     },
     "& h2": {
         ...theme.typography.h2,
+        fontSize: "2.5rem",
         marginTop: 12,
         marginBottom: 12,
     },
     "& h3": {
         ...theme.typography.h3,
+        fontSize: "2rem",
         marginTop: 12,
         marginBottom: 12,
     },
     "& h4": {
         ...theme.typography.h4,
+        fontSize: "1.5rem",
         marginTop: 12,
         marginBottom: 12,
     },
     "& h5": {
         ...theme.typography.h5,
+        fontSize: "1.25rem",
         marginTop: 4,
         marginBottom: 4,
     },
     "& h6": {
         ...theme.typography.h6,
+        fontSize: "1rem",
         marginTop: 4,
         marginBottom: 4,
     },
     "& p": {
+        fontSize: "1.25rem",
         marginTop: 12,
         marginBottom: 12,
     },
@@ -49,8 +56,14 @@ const MarkdownStyleContainer = styled("span")(({ theme }) => ({
     "& *:last-child": {
         marginBottom: 0,
     },
+    "& li": {
+        fontSize: "1.25rem",
+        marginTop: 4,
+        marginBottom: 4,
+    },
     "& code": {
         lineHeight: 1.5,
+        fontSize: "1.25rem",
         fontFamily: "monospace",
         padding: 4,
         borderRadius: 4,

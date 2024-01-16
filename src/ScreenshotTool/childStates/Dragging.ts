@@ -183,7 +183,7 @@ export class ScreenshotDragging extends StateNode {
         }
         if (shapes.length) {
             const textId = Math.random().toString(36).substring(7);
-            createTextShapeInEditor(textId, "Athena is thinking...");
+            createTextShapeInEditor(textId, "# Athena is thinking...");
 
             const blob = await exportToBlob(
                 editor,
