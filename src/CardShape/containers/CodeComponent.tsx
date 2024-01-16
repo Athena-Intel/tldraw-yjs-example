@@ -41,6 +41,7 @@ export const CodeComponent: FC<Props> = memo(({ className, children }) => {
                     <button
                         className="flex gap-1.5 items-center bg-none p-1 text-xs text-white"
                         onClick={() => setIsWrapped(!isWrapped)}
+                        onPointerDown={(e) => e.stopPropagation()}
                     >
                         <WrapTextIcon sx={{ height: "20px" }} />
 
@@ -50,6 +51,7 @@ export const CodeComponent: FC<Props> = memo(({ className, children }) => {
                     <button
                         className="flex gap-1.5 items-center bg-none p-1 text-xs text-white"
                         onClick={copyToClipboard}
+                        onPointerDown={(e) => e.stopPropagation()}
                     >
                         {isCopied ? (
                             <CheckIcon sx={{ height: "20px" }} />

@@ -15,7 +15,7 @@ import {
     TableRow,
     TableCell,
 } from "@tremor/react";
-import MarkdownStyleContainer from "./containers/MarkdownStyleContainer";
+import MarkdownRenderer from "./containers/MarkdownRenderer";
 import ListComponent from "./containers/ListComponent";
 import OrderedListComponent from "./containers/OrderedListComponent";
 import TableContainer from "./containers/TableContainer";
@@ -120,7 +120,7 @@ export class CardShapeUtil extends ShapeUtil<ICardShape> {
                     className="markdown prose w-full break-words dark:prose-invert light"
                     style={{ padding: "1rem" }}
                 >
-                    <MarkdownStyleContainer>
+                    <MarkdownRenderer content={shape.props.text}>
                         <Markdown
                             options={{
                                 wrapper: "article",
@@ -154,7 +154,7 @@ export class CardShapeUtil extends ShapeUtil<ICardShape> {
                         >
                             {processedMarkdown}
                         </Markdown>
-                    </MarkdownStyleContainer>
+                    </MarkdownRenderer>
                 </div>
                 {/* <h2>Clicks: {count}</h2> */}
                 {/* <button

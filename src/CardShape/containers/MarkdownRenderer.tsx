@@ -1,4 +1,8 @@
+import React, { useState } from "react";
 import { styled } from "@mui/material/styles";
+import CheckIcon from "@mui/icons-material/Check";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import Button from "@mui/material/Button";
 
 const MarkdownStyleContainer = styled("span")(({ theme }) => ({
     display: "block",
@@ -76,4 +80,43 @@ const MarkdownStyleContainer = styled("span")(({ theme }) => ({
         // },
     },
 }));
-export default MarkdownStyleContainer;
+
+interface MarkdownRendererProps {
+    children: React.ReactNode;
+    content: string;
+}
+
+const MarkdownRenderer = ({ children, content }: MarkdownRendererProps) => {
+    const [isCopied, setIsCopied] = useState(false);
+
+    const copyToClipboard = async () => {
+        try {
+            await navigator.clipboard.writeText(content);
+            setIsCopied(true);
+            setTimeout(() => setIsCopied(false), 2000);
+        } catch (err) {
+            console.error("Failed to copy text: ", err);
+        }
+    };
+
+    return (
+        <div>
+            <Button
+                variant="outlined"
+                onClick={copyToClipboard}
+                onPointerDown={(e) => e.stopPropagation()}
+                sx={{ float: "right" }}
+            >
+                {isCopied ? (
+                    <CheckIcon sx={{ height: "20px" }} />
+                ) : (
+                    <ContentCopyIcon sx={{ height: "20px" }} />
+                )}
+                {isCopied ? "Copied!" : "Copy"}
+            </Button>
+            <MarkdownStyleContainer>{children}</MarkdownStyleContainer>;
+        </div>
+    );
+};
+
+export default MarkdownRenderer;
