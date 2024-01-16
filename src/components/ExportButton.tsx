@@ -36,7 +36,7 @@ type EnabledRequestType = AthenaRequestType | "custom";
 
 const requestPrompts: Record<AthenaRequestType, string> = {
     analyze: ANALYZE_PROMPT,
-    transcribe: "Please transcribe the text in the image.",
+    transcribe: "Please transcribe the image.",
     execute: "Please complete the task depicted in the image, if possible.",
 };
 
@@ -75,6 +75,8 @@ export const ExportButton = track(() => {
         } else {
             setRequest(requestPrompts[value as AthenaRequestType]);
         }
+        setRequestType(value as EnabledRequestType);
+        console.log(value);
     };
 
     const asyncLocalStorage = {
@@ -236,7 +238,7 @@ export const ExportButton = track(() => {
                             Analyze
                         </ToggleButton>
                         <ToggleButton
-                            value="transcribe."
+                            value="transcribe"
                             aria-label="transcribe"
                         >
                             Transcribe
