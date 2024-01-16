@@ -75,11 +75,11 @@ const customUiOverrides: TLUiOverrides = {
             },
         };
     },
-    toolbar: (_editor, toolbarItems, { tools }) => {
-        // toolbarItems.splice(4, 0, toolbarItem(tools.screenshot));
-        toolbarItems.splice(4, 0, toolbarItem(tools.card));
-        return toolbarItems;
-    },
+    // toolbar: (_editor, toolbarItems, { tools }) => {
+    //     // toolbarItems.splice(4, 0, toolbarItem(tools.screenshot));
+    //     toolbarItems.splice(4, 0, toolbarItem(tools.card));
+    //     return toolbarItems;
+    // },
 };
 
 // [3]

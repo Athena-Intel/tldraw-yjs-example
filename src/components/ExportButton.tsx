@@ -175,6 +175,7 @@ export const ExportButton = track(() => {
                     cursor: "pointer",
                     zIndex: 100000,
                     pointerEvents: "all",
+                    backgroundColor: "white",
                 }}
                 endIcon={<AddIcon sx={{ mb: "3px" }} />}
             >
