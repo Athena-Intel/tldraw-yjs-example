@@ -14,6 +14,8 @@ export const cardShapeMigrations = defineMigrations({
             down(shape) {
                 const migratedDownShape = { ...shape };
                 migratedDownShape._somePropertyToRemove = "some value";
+                // isComplete is a required property, so we need to add it back
+                // migratedDownShape.isComplete = true;
                 return migratedDownShape;
             },
         },

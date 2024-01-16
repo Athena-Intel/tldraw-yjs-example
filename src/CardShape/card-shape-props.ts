@@ -7,6 +7,7 @@ export const cardShapeProps: ShapeProps<ICardShape> = {
     h: T.number,
     color: DefaultColorStyle,
     text: T.string,
+    isComplete: T.boolean,
 };
 
 // To generate your own custom styles, check out the custom styles example.

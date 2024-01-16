@@ -8,5 +8,6 @@ export type ICardShape = TLBaseShape<
         h: number;
         color: TLDefaultColorStyle;
         text: string;
+        isComplete: boolean;
     }
 >;

@@ -24,6 +24,7 @@ import PreBlock from "./containers/CodeComponent";
 import { cardShapeMigrations } from "./card-shape-migrations";
 import { cardShapeProps } from "./card-shape-props";
 import { ICardShape } from "./card-shape-types";
+import { LinearProgress } from "@mui/material";
 
 const specialToken = "_";
 const preprocessMarkdown = (markdown: string) => {
@@ -64,6 +65,7 @@ export class CardShapeUtil extends ShapeUtil<ICardShape> {
             h: 300,
             color: "black",
             text: "",
+            isComplete: false,
         };
     }
 
@@ -110,6 +112,10 @@ export class CardShapeUtil extends ShapeUtil<ICardShape> {
                     overflow: "hidden",
                 }}
             >
+                {shape.props.isComplete && (
+                    <LinearProgress sx={{ paddingTop: "1px" }} />
+                )}
+
                 <div
                     className="markdown prose w-full break-words dark:prose-invert light"
                     style={{ padding: "1rem" }}
